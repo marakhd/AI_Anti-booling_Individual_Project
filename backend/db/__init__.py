@@ -12,14 +12,85 @@ class Base(DeclarativeBase):
     pass
 
 
+class User(Base):
+    __tablename__ = "users"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+
+    telegram_id: Mapped[int] = mapped_column(unique=True)
+    username: Mapped[str | None] = mapped_column(String, nullable=True)
+
+    messages = relationship("Message", back_populates="user")
+
+
+class Chat(Base):
+    __tablename__ = "chats"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+
+    telegram_id: Mapped[int] = mapped_column(unique=True)
+    title: Mapped[str | None] = mapped_column(String, nullable=True)
+
+    messages = relationship("Message", back_populates="chat")
+
+
 class ToxicMessage(Base):
     __tablename__ = "toxic_messages"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    user_id: Mapped[int] = mapped_column(Integer)
-    chat_id: Mapped[int] = mapped_column(Integer)
+
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    chat_id: Mapped[int] = mapped_column(ForeignKey("chats.id"))
+
     text: Mapped[str] = mapped_column(String)
     toxicity: Mapped[float] = mapped_column(Float)
+
+    user = relationship("User", back_populates="messages")
+    chat = relationship("Chat", back_populates="messages")
+
+
+async def save_message(message, toxicity):
+    async with SessionLocal() as session:
+
+        # ищем пользователя
+        user = await session.execute(
+            select(User).where(User.telegram_id == message.from_user.id)
+        )
+        user = user.scalar_one_or_none()
+
+        if not user:
+            user = User(
+                telegram_id=message.from_user.id,
+                username=message.from_user.username
+            )
+            session.add(user)
+            await session.flush()
+
+        # ищем чат
+        chat = await session.execute(
+            select(Chat).where(Chat.telegram_id == message.chat.id)
+        )
+        chat = chat.scalar_one_or_none()
+
+        if not chat:
+            chat = Chat(
+                telegram_id=message.chat.id,
+                title=message.chat.title
+            )
+            session.add(chat)
+            await session.flush()
+
+        # сохраняем сообщение
+        msg = Message(
+            user_id=user.id,
+            chat_id=chat.id,
+            text=message.text,
+            toxicity=toxicity
+        )
+
+        session.add(msg)
+
+        await session.commit()
 
 
 async def init_db():
