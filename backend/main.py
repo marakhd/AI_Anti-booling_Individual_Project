@@ -24,7 +24,7 @@ async def main():
 
 
 if __name__ == "__main__":
-  try
+  try:
     asyncio.run(main())
   except KeyboardInterrupt:
     print("Shutting down...")

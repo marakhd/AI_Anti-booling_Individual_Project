@@ -1,0 +1,13 @@
+{
+	email marakin09@mail.ru
+}
+
+api.ab-bot.marakhd.ru {
+	reverse_proxy localhost:3000
+}
+
+ab-bot.marakhd.ru {
+	root * /var/www/ab-bot
+	file_server
+	try_files {path} /index.html
+}

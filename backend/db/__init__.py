@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import String, Integer, Float
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship, selectinload
+from sqlalchemy import ForeignKey, String, Integer, Float, select
 
 DATABASE_URL = "sqlite+aiosqlite:///db.sqlite3"
 
@@ -34,7 +34,7 @@ class Chat(Base):
     messages = relationship("Message", back_populates="chat")
 
 
-class ToxicMessage(Base):
+class Message(Base):
     __tablename__ = "toxic_messages"
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -60,8 +60,7 @@ async def save_message(message, toxicity):
 
         if not user:
             user = User(
-                telegram_id=message.from_user.id,
-                username=message.from_user.username
+                telegram_id=message.from_user.id, username=message.from_user.username
             )
             session.add(user)
             await session.flush()
@@ -73,24 +72,30 @@ async def save_message(message, toxicity):
         chat = chat.scalar_one_or_none()
 
         if not chat:
-            chat = Chat(
-                telegram_id=message.chat.id,
-                title=message.chat.title
-            )
+            chat = Chat(telegram_id=message.chat.id, title=message.chat.title)
             session.add(chat)
             await session.flush()
 
         # сохраняем сообщение
         msg = Message(
-            user_id=user.id,
-            chat_id=chat.id,
-            text=message.text,
-            toxicity=toxicity
+            user_id=user.id, chat_id=chat.id, text=message.text, toxicity=toxicity
         )
 
         session.add(msg)
 
         await session.commit()
+
+
+async def get_messages_db():
+    async with SessionLocal() as session:
+        result = await session.execute(
+            select(Message).options(
+                selectinload(Message.user),
+                selectinload(Message.chat)
+            )
+        )
+
+        return result.scalars().all()
 
 
 async def init_db():

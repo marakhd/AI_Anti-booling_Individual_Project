@@ -10,7 +10,7 @@ from aiogram.filters import CommandStart
 from detoxify import Detoxify
 
 from config import BOT_TOKEN, ADMIN_ID, TOXIC_THRESHOLD
-from db import SessionLocal, ToxicMessage, init_db
+from db import SessionLocal, Message, init_db
 
 logging.basicConfig(level=logging.INFO)
 
@@ -29,7 +29,7 @@ def is_toxic(text: str) -> tuple[bool, float]:
 
 async def save_toxic_message(message: Message, toxicity: float):
     async with SessionLocal() as session:
-        obj = ToxicMessage(
+        obj = Message(
             user_id=message.from_user.id,
             chat_id=message.chat.id,
             text=message.text,
