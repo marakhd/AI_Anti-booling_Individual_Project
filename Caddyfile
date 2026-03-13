@@ -3,11 +3,9 @@
 }
 
 api.ab-bot.marakhd.ru {
-	reverse_proxy localhost:3000
+	reverse_proxy backend:8000
 }
 
 ab-bot.marakhd.ru {
-	root * /var/www/ab-bot
-	file_server
-	try_files {path} /index.html
+	reverse_proxy frontend:3000
 }

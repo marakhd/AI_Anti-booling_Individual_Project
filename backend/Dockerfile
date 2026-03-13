@@ -1,16 +1,18 @@
-FROM python:3.13.4-slim
+FROM python:3.11-slim
 
+WORKDIR /app
+
+# Системные зависимости для torch/detoxify
 RUN apt-get update && apt-get install -y \
-    build-essential \
-    python3-dev \
-    libffi-dev \
-    libssl-dev \
+    gcc \
+    g++ \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip install poetry
-
-COPY pyproject.toml *.lock ./
-RUN poetry install
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
-CMD [ "poetry", "run", "py", "main.py"  ]
+
+EXPOSE 8000
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -1,27 +1,21 @@
-FROM oven/bun:latest AS build
+FROM node:20-alpine AS deps
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
 
-WORKDIR /opt/frontend
-
-COPY package.json bun.lock ./
-
-RUN bun install
-
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+RUN npm run build
 
-RUN bun run build
+FROM node:20-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
 
-FROM oven/bun:latest
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public
 
-WORKDIR /opt/frontend
-
-# Копируем зависимости и билд из первого этапа
-COPY --from=build /opt/frontend/.next ./.next
-COPY --from=build /opt/frontend/public ./public
-COPY --from=build /opt/frontend/node_modules ./node_modules
-COPY --from=build /opt/frontend/package.json ./
-
-# Открываем порт
 EXPOSE 3000
-
-# Запускаем Next.js приложение
-CMD ["bun", "run", "start"]
+CMD ["node", "server.js"]
