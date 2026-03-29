@@ -122,7 +122,6 @@ export default function SettingsPage() {
           </Row>
         </div>
 
-        {/* Visual scale */}
         <div>
           <div style={{ fontSize: '11px', color: 'var(--muted)', marginBottom: '8px' }}>Шкала реагирования</div>
           <div style={{ height: '12px', borderRadius: '6px', overflow: 'hidden', display: 'flex' }}>

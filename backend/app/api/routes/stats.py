@@ -26,7 +26,7 @@ async def get_overview(db: AsyncSession = Depends(get_db)):
         "violators": violators,
         "banned_users": banned,
         "chats": chats_count,
-        "ai_accuracy": 97.3,  # Можно заменить на реальную метрику
+        "ai_accuracy": 97.3,
     }
 
 

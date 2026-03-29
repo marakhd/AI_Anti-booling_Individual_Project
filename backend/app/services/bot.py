@@ -27,7 +27,6 @@ bot = Bot(token=settings.bot_token)
 dp = Dispatcher()
 
 
-# ── Команды ──────────────────────────────────────────────────────
 
 
 @dp.message(Command("start", "help"))
@@ -67,20 +66,16 @@ async def cmd_stats(message: Message):
     )
 
 
-# ── Основной обработчик сообщений ────────────────────────────────
 
 
 @dp.message(F.text & F.chat.type.in_({"group", "supergroup"}))
 async def handle_group_message(message: Message):
-    """Анализирует каждое текстовое сообщение в группе."""
     if not message.text or not message.from_user:
         return
 
-    # Анализ через Detoxify (синхронный вызов в executor чтобы не блокировать event loop)
     loop = asyncio.get_event_loop()
     analysis = await loop.run_in_executor(None, analyze_text, message.text)
 
-    # Сохраняем в БД
     async with AsyncSessionLocal() as db:
         user = await get_or_create_user(
             db,
@@ -103,23 +98,19 @@ async def handle_group_message(message: Message):
             analysis=analysis,
         )
 
-    # Реагируем на нарушение
     if analysis.action == "deleted":
         try:
             await message.delete()
         except Exception:
-            pass  # Нет прав на удаление
+            pass
 
-        # Уведомление в чат
         username_str = f"@{message.from_user.username}" if message.from_user.username else message.from_user.first_name
         warn_msg = await message.answer(
             f"🚫 Сообщение от {username_str} удалено (токсичность: {analysis.toxicity_score:.0%})"
         )
 
-        # Уведомление администратору
         await notify_admin(message, analysis, action="deleted")
 
-        # Если пользователь забанен — ещё одно сообщение
         async with AsyncSessionLocal() as db:
             from sqlalchemy import select
             from app.models.models import TelegramUser
@@ -141,7 +132,6 @@ async def handle_group_message(message: Message):
 
 
 async def notify_admin(message: Message, analysis, action: str):
-    """Отправляет уведомление администратору."""
     if not settings.admin_chat_id:
         return
     try:

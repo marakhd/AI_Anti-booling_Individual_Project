@@ -1,7 +1,3 @@
-"""
-ToxGuard Backend
-FastAPI + SQLite + Detoxify + aiogram
-"""
 import asyncio
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
@@ -16,18 +12,15 @@ settings = get_settings()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Старт: инициализация БД + загрузка Detoxify + запуск бота
     print("🚀 Старт ToxGuard...")
     await init_db()
     print("✅ База данных инициализирована")
 
-    # Запускаем бота в фоне
     from app.services.bot import start_bot
     bot_task = asyncio.create_task(start_bot())
 
     yield
 
-    # Остановка
     bot_task.cancel()
     try:
         await bot_task
@@ -43,7 +36,6 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS — разрешаем Next.js фронт
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins,
@@ -52,7 +44,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Подключаем роуты
 app.include_router(messages.router, prefix="/api")
 app.include_router(users.router, prefix="/api")
 app.include_router(stats.router, prefix="/api")

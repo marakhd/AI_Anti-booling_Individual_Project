@@ -55,7 +55,6 @@ export default function UsersPage() {
     try {
       const res = await fetch(`${API}/api/users/${user.id}/${action}`, { method: 'POST' })
       if (!res.ok) throw new Error()
-      // Обновляем локально — не делаем лишний запрос
       setUsers(prev => prev.map(u =>
         u.id === user.id
           ? { ...u, isBanned: !u.isBanned, isWarned: false, status: !u.isBanned ? 'banned' : 'active' }
@@ -74,7 +73,6 @@ export default function UsersPage() {
 
   return (
     <div style={{ padding: '32px' }}>
-      {/* Header */}
       <div style={{ marginBottom: '24px', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
         <div>
           <div style={{ fontSize: '11px', color: 'var(--muted)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '6px' }}>
@@ -100,7 +98,6 @@ export default function UsersPage() {
         </div>
       )}
 
-      {/* Summary Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '24px' }}>
         {([
           { status: 'banned', count: banned, label: 'Заблокировано' },
@@ -125,7 +122,6 @@ export default function UsersPage() {
         })}
       </div>
 
-      {/* Table */}
       <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '12px', overflow: 'hidden' }}>
         <div style={{ padding: '12px 24px', borderBottom: '1px solid var(--border)', display: 'grid', gridTemplateColumns: '2fr 120px 80px 160px 120px', gap: '16px' }}>
           {['Пользователь', 'Статус', 'Наруш.', 'Последнее нарушение', 'Действия'].map(h => (
@@ -153,7 +149,6 @@ export default function UsersPage() {
               onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'}
               onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
             >
-              {/* User */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <div style={{
                   width: '38px', height: '38px', borderRadius: '10px', flexShrink: 0,
@@ -174,7 +169,6 @@ export default function UsersPage() {
                 </div>
               </div>
 
-              {/* Status */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <StatusIcon size={12} color={status.color} />
                 <span style={{ fontSize: '11px', color: status.color, fontFamily: 'JetBrains Mono, monospace' }}>
@@ -182,7 +176,6 @@ export default function UsersPage() {
                 </span>
               </div>
 
-              {/* Violations */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <MessageSquareX size={12} color={user.violations > 5 ? 'var(--accent)' : 'var(--muted)'} />
                 <span style={{ fontSize: '13px', fontWeight: 600, fontFamily: 'JetBrains Mono, monospace', color: user.violations > 5 ? 'var(--accent)' : user.violations > 0 ? 'var(--warn)' : 'var(--safe)' }}>
@@ -190,14 +183,12 @@ export default function UsersPage() {
                 </span>
               </div>
 
-              {/* Last violation */}
               <div style={{ fontSize: '11px', color: 'var(--text-dim)', fontFamily: 'JetBrains Mono, monospace' }}>
                 {user.lastViolation
                   ? new Date(user.lastViolation).toLocaleDateString('ru', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })
                   : '—'}
               </div>
 
-              {/* Actions */}
               <div>
                 <button
                   onClick={() => handleBan(user)}

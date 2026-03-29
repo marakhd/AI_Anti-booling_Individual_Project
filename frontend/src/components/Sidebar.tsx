@@ -38,7 +38,6 @@ export default function Sidebar() {
         zIndex: 50,
       }}
     >
-      {/* Logo */}
       <div
         style={{
           padding: '24px 20px 20px',
@@ -72,7 +71,6 @@ export default function Sidebar() {
           </div>
         </div>
 
-        {/* Live indicator */}
         <div
           style={{
             marginTop: '12px',
@@ -100,7 +98,6 @@ export default function Sidebar() {
         </div>
       </div>
 
-      {/* Navigation */}
       <nav style={{ flex: 1, padding: '16px 12px' }}>
         <div style={{ fontSize: '10px', color: 'var(--muted)', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0 8px', marginBottom: '8px', fontFamily: 'JetBrains Mono, monospace' }}>
           Навигация
@@ -172,7 +169,6 @@ export default function Sidebar() {
         </div>
       </nav>
 
-      {/* Bottom */}
       <div
         style={{
           padding: '16px 12px',

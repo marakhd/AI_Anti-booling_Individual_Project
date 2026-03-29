@@ -20,7 +20,6 @@ export default function StatCard({ label, value, sub, accentColor = 'var(--accen
         overflow: 'hidden',
       }}
     >
-      {/* Top accent line */}
       <div
         style={{
           position: 'absolute',

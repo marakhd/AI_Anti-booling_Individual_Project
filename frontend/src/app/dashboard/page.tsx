@@ -14,7 +14,6 @@ import ToxicityBadge from '@/components/ToxicityBadge'
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'https://api.ab-bot.marakhd.ru'
 
-// -- Типы --------------------------------------------------------
 
 interface Stats {
   total_messages: number
@@ -52,7 +51,6 @@ interface Message {
   timestamp: string
 }
 
-// -- Tooltip для графика ------------------------------------------
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
@@ -71,13 +69,11 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null
 }
 
-// -- Скелетон-заглушка пока грузятся данные -----------------------
 
 const Skeleton = ({ w = '100%', h = '20px' }: { w?: string; h?: string }) => (
   <div style={{ width: w, height: h, borderRadius: '6px', background: 'var(--border)', animation: 'pulse 1.5s ease-in-out infinite' }} />
 )
 
-// -- Основной компонент -------------------------------------------
 
 export default function DashboardPage() {
   const [stats, setStats] = useState<Stats | null>(null)
@@ -89,7 +85,6 @@ export default function DashboardPage() {
 
   useEffect(() => {
     fetchAll()
-    // Обновляем статистику каждые 30 секунд
     const interval = setInterval(fetchAll, 30_000)
     return () => clearInterval(interval)
   }, [])
@@ -133,14 +128,12 @@ export default function DashboardPage() {
   return (
     <div style={{ padding: '32px', maxWidth: '1400px' }}>
 
-      {/* Ошибка подключения */}
       {error && (
         <div style={{ marginBottom: '20px', padding: '12px 16px', background: 'rgba(255,51,102,0.1)', border: '1px solid rgba(255,51,102,0.3)', borderRadius: '8px', fontSize: '13px', color: 'var(--accent)' }}>
           ?? {error}
         </div>
       )}
 
-      {/* Header */}
       <div style={{ marginBottom: '32px' }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
           <div>
@@ -163,7 +156,6 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Stats Grid */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '28px' }}>
         <StatCard
           label="Заблокировано"
@@ -195,9 +187,7 @@ export default function DashboardPage() {
         />
       </div>
 
-      {/* Charts Row */}
       <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '16px', marginBottom: '28px' }}>
-        {/* Area Chart */}
         <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '12px', padding: '24px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
             <div>
@@ -245,7 +235,6 @@ export default function DashboardPage() {
           )}
         </div>
 
-        {/* Pie Chart */}
         <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '12px', padding: '24px' }}>
           <div style={{ fontSize: '13px', fontWeight: 500, color: 'var(--text)', marginBottom: '4px' }}>Распределение</div>
           <div style={{ fontSize: '11px', color: 'var(--muted)', fontFamily: 'JetBrains Mono, monospace', marginBottom: '16px' }}>типы сообщений</div>
@@ -278,9 +267,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Bottom Row */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-        {/* Recent violations */}
         <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '12px', overflow: 'hidden' }}>
           <div style={{ padding: '20px 20px 16px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Activity size={14} color="var(--accent)" />
@@ -314,7 +301,6 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Chat stats */}
         <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '12px', overflow: 'hidden' }}>
           <div style={{ padding: '20px 20px 16px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <TrendingUp size={14} color="var(--safe)" />

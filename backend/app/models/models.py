@@ -5,7 +5,6 @@ from app.core.database import Base
 
 
 class Chat(Base):
-    """Telegram-чат подключённый к боту."""
     __tablename__ = "chats"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -22,7 +21,6 @@ class Chat(Base):
 
 
 class TelegramUser(Base):
-    """Пользователь Telegram."""
     __tablename__ = "telegram_users"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -40,20 +38,17 @@ class TelegramUser(Base):
 
 
 class Message(Base):
-    """Проанализированное сообщение."""
     __tablename__ = "messages"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     telegram_message_id: Mapped[int] = mapped_column(Integer)
     text: Mapped[str] = mapped_column(Text)
 
-    # Связи
     chat_id: Mapped[int] = mapped_column(Integer, ForeignKey("chats.id"))
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("telegram_users.id"))
     chat: Mapped["Chat"] = relationship("Chat", back_populates="messages")
     user: Mapped["TelegramUser"] = relationship("TelegramUser", back_populates="messages")
 
-    # Результаты Detoxify
     toxicity_score: Mapped[float] = mapped_column(Float)
     severe_toxicity: Mapped[float] = mapped_column(Float, default=0.0)
     obscene: Mapped[float] = mapped_column(Float, default=0.0)
@@ -61,8 +56,7 @@ class Message(Base):
     insult: Mapped[float] = mapped_column(Float, default=0.0)
     identity_attack: Mapped[float] = mapped_column(Float, default=0.0)
 
-    # Решение
-    toxicity_level: Mapped[str] = mapped_column(String(20))  # safe / warning / toxic
-    action_taken: Mapped[str] = mapped_column(String(20))    # passed / warned / deleted
+    toxicity_level: Mapped[str] = mapped_column(String(20))
+    action_taken: Mapped[str] = mapped_column(String(20))
 
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)

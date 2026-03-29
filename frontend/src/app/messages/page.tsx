@@ -78,7 +78,6 @@ export default function MessagesPage() {
     fetchMessages()
   }, [filter])
 
-  // Фильтрация по поиску — только на клиенте
   const filtered = messages.filter(m => {
     if (!search) return true
     const q = search.toLowerCase()
@@ -89,7 +88,6 @@ export default function MessagesPage() {
 
   return (
     <div style={{ padding: '32px', height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {/* Header */}
       <div style={{ marginBottom: '24px', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
         <div>
           <div style={{ fontSize: '11px', color: 'var(--muted)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '6px' }}>
@@ -121,7 +119,6 @@ export default function MessagesPage() {
         </div>
       )}
 
-      {/* Filters */}
       <div style={{ display: 'flex', gap: '12px', marginBottom: '20px', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1, background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '8px', padding: '0 12px' }}>
           <Search size={14} color="var(--muted)" />
@@ -158,11 +155,8 @@ export default function MessagesPage() {
         </div>
       </div>
 
-      {/* Content */}
       <div style={{ display: 'flex', gap: '16px', flex: 1, overflow: 'hidden' }}>
-        {/* List */}
         <div style={{ flex: 1, background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '12px', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-          {/* Table header */}
           <div style={{ padding: '12px 20px', borderBottom: '1px solid var(--border)', display: 'grid', gridTemplateColumns: '1fr 120px 120px 100px', gap: '12px' }}>
             {['Сообщение / Пользователь', 'Статус', 'Чат', 'Действие'].map(h => (
               <div key={h} style={{ fontSize: '10px', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.08em', fontFamily: 'JetBrains Mono, monospace' }}>
@@ -171,7 +165,6 @@ export default function MessagesPage() {
             ))}
           </div>
 
-          {/* Rows */}
           <div style={{ flex: 1, overflowY: 'auto' }}>
             {loading ? (
               <div style={{ padding: '48px', textAlign: 'center', color: 'var(--muted)', fontSize: '13px' }}>
@@ -228,7 +221,6 @@ export default function MessagesPage() {
           </div>
         </div>
 
-        {/* Detail Panel */}
         {selectedMsg && (
           <div style={{ width: '320px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '12px', padding: '20px', overflowY: 'auto', flexShrink: 0 }}>
             <div style={{ fontSize: '11px', color: 'var(--muted)', fontFamily: 'JetBrains Mono, monospace', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '12px' }}>
